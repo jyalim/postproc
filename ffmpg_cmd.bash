@@ -23,16 +23,17 @@ fps=100
 in_glob="fig_repo/prefix_%05d.png"
 out_mov="new_movie.mp4"
 height=1080
-width=$(python -c "print( int(16/9.*$height) )")
 
 ## Constants
 IS_ODD=1
 
+## Checks
 (( fps & 1 == IS_ODD)) && {
   printf "fps must be even: ${fps}\n"  
   exit 150
 } || :
 gop=$(( fps / 2 ))
+width=$(python -c "print( int(16/9.*$height) )")
 
 ## Subroutines
 get_bit_opts() {
