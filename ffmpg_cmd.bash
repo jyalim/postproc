@@ -20,8 +20,8 @@
 
 ## INPUTS
 fps=100
-in_glob="fig_aps_mov/B13000e-4_N2e4_Pr1e0_F30e-2_m256_tr5e3_full_ps_%05d_T.png"
-out_mov="B13t.mp4"
+in_glob="fig_repo/prefix_%05d.png"
+out_mov="new_movie.mp4"
 height=1080
 width=$(python -c "print( int(16/9.*$height) )")
 
