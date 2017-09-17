@@ -55,12 +55,12 @@ __EOF
 opts=(
   -framerate $fps
   -i "$in_glob"
-	-c:v libx264
-	-flags:v "+cgop" 
+  -c:v libx264
+  -flags:v "+cgop"
   -g $gop
   -profile:v high -level 4.0
   $(get_bit_opts)
-  -bf 2 
+  -bf 2
   -coder 1
   -crf 16
   -pix_fmt yuv420p
