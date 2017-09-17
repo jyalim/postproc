@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # ======================================================================
-# ASSUMES 
-#   16:9 aspect ratio
-# ----------------------------------------------------------------------
 # DESCRIPTION
-#   Creates high quality movies that will not lose quality when
-#   web-host re-encodes.
+#   Creates high quality movies that do not lose critical quality
+#   after web-host re-encodes.
+# 
+#   Assumes 16:9 aspect ratio, but currently does not enforce --
+#   implicit through bitrate
 # ----------------------------------------------------------------------
 # NOTE
 #   After publishing to web-host (e.g. youtube), it may take some time
@@ -29,7 +29,7 @@ IS_ODD=1
 
 ## Checks
 (( fps & 1 == IS_ODD)) && {
-  printf "fps must be even: ${fps}\n"  
+  printf "fps must be even: $fps\n"  
   exit 150
 } || :
 gop=$(( fps / 2 ))
@@ -69,7 +69,12 @@ opts=(
   -r $fps
   # https://video.stackexchange.com/questions/9947/how-do-i-change-frame-size-preserving-width-using-ffmpeg
   -vf setsar=1:1 
-  # padding to youtube 16:9 pixel size is recommended for frames that are
+  # --------------------------------------------------------------------
+  # NOTE -- currently movie is not being forced to any size
+  #      -- output will be the result of the size of the input frames.
+  #      -- To change this, specify `size` or `pad` as a `-vf` flag.
+  # --------------------------------------------------------------------
+  # Padding to youtube 16:9 pixel size is recommended for frames that are
   # smaller--e.g. to 1920x1080p. See docs to change pad color.
 # -vf pad=$width:$height:0:0
   -movflags +faststart
