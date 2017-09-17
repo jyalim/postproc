@@ -32,7 +32,7 @@ IS_ODD=1
   printf "fps must be even: ${fps}\n"  
   exit 150
 } || :
-gop=$((100/2))
+gop=$(( fps / 2 ))
 
 ## Subroutines
 get_bit_opts() {
