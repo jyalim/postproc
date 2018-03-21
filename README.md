@@ -11,9 +11,10 @@ Various scripts to post process data through the command line.
                Dynamic Mode Decomposition (DMD) on a set of binary data.
  * `gsgs.bash` -- 
       ghostscript grayscale, convert color pdf to grayscale
-      to preview black and white printing
+      to preview black and white printing, from [superuser][3].
     
 
  [1]: https://github.com/hellabyte/algoPy
  [2]: https://github.com/hellabyte/hellaPy
+ [3]: https://superuser.com/questions/104656/convert-a-pdf-to-greyscale-on-the-command-line-in-floss
 
