@@ -11,10 +11,10 @@
 # ======================================================================
 
 
-tex_file="$1"
-prefix=$(basename "${tex_file%.*}")
+in_tex="$1"
+prefix=$(basename "${in_tex%.*}")
 
-latex -halt-on-error -interaction=batchmode -jobname "${prefix}" "${tex_file}"
+latex -halt-on-error -interaction=batchmode -jobname "${prefix}" "${in_tex}"
 dvips -o "${prefix}.ps" "${prefix}.dvi"
 ps2eps -f "${prefix}.ps"
 rm "${prefix}.ps" "${prefix}.dvi" 
