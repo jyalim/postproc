@@ -9,11 +9,12 @@ Various scripts to post process data through the command line.
  * `ffmpg_cmd.bash` -- make movies optimized for youtube
  * `pod.py` -- does Principal Orthogonal Decomposition (POD) and
                Dynamic Mode Decomposition (DMD) on a set of binary data.
- * `gsgs.bash` -- 
-      ghostscript grayscale, convert color pdf to grayscale
-      to preview black and white printing, from [superuser][3].
- * `epstocpdf.bash` --
-      convert input eps to cropped pdf.
+ * `gsgs.bash` -- ghostscript grayscale, convert color pdf to grayscale
+                  to preview black and white printing, from [superuser][3].
+ * `epstocpdf.bash` -- convert input eps to cropped pdf.
+ * `textoeps.bash` -- compile standalone tikz/pgfplots tex file into
+                      vector eps
+
     
 
  [1]: https://github.com/hellabyte/algoPy
