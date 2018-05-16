@@ -12,6 +12,8 @@ Various scripts to post process data through the command line.
  * `gsgs.bash` -- 
       ghostscript grayscale, convert color pdf to grayscale
       to preview black and white printing, from [superuser][3].
+ * `epstocpdf.bash` --
+      convert input eps to cropped pdf.
     
 
  [1]: https://github.com/hellabyte/algoPy
