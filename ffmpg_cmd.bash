@@ -7,6 +7,18 @@
 #   Assumes 16:9 aspect ratio, but currently does not enforce --
 #   implicit through bitrate
 # ----------------------------------------------------------------------
+# USAGE
+#     png_frames="path/to/frames/prefix_%04d.png"
+#     mp4_movie="out.mp4"
+#     framerate=60          
+#     resize=600:600        
+#     bash ffmpg_cmd.bash "$png_frames" "$mp4_movie" $framerate $resize
+#  
+#   * Note that the framerate is optional and defaults to 60 fps
+#   * Note that resize is optional and defaults to the input frame size
+#     and that resize must be in the format of 
+#     width_pixels:height_pixels
+# ----------------------------------------------------------------------
 # NOTE
 #   After publishing to web-host (e.g. youtube), it may take some time
 #   before high-quality stream is available. 
@@ -19,15 +31,21 @@
 # ======================================================================
 
 ## INPUTS
-fps=100
-in_glob="fig_repo/prefix_%05d.png"
-out_mov="new_movie.mp4"
+in_glob="${1:?Input files missing}"
+out_mov="${2:?Output mp4 missing}"
+fps="${3:-60}"
+size="${4:-0}"
 height=1080
 
 ## Constants
 IS_ODD=1
 
 ## Checks
+[[ $size != 0 ]] && {
+  printf "Resize mode\nSetting size to: $size\n" 
+  optional_vf_resize="-vf size=$size"
+  
+}
 (( fps & 1 == IS_ODD)) && {
   printf "fps must be even: $fps\n"  
   exit 150
@@ -77,6 +95,7 @@ opts=(
   # Padding to youtube 16:9 pixel size is recommended for frames that are
   # smaller--e.g. to 1920x1080p. See docs to change pad color.
 # -vf pad=$width:$height:0:0
+  $optional_vf_resize
   -movflags +faststart
   "$out_mov"
 )
