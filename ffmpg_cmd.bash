@@ -14,10 +14,16 @@
 #     resize=600:600        
 #     bash ffmpg_cmd.bash "$png_frames" "$mp4_movie" $framerate $resize
 #  
-#   * Note that the framerate is optional and defaults to 60 fps
-#   * Note that resize is optional and defaults to the input frame size
+#   * NOTE that the framerate is optional and defaults to 60 fps
+#   * NOTE that resize is optional and defaults to the input frame size
 #     and that resize must be in the format of 
-#     width_pixels:height_pixels
+#       width_pixels:height_pixels 
+#     or to preserve aspect ratio:
+#       width_pixels:-1 
+#     which may not be as safe as -2 in place as -1 ( see the docs for 
+#     more: https://trac.ffmpeg.org/wiki/Scaling )
+#   * NOTE that resize is the 4th positional argument--framerate must be
+#     specified if resize needs specification.
 # ----------------------------------------------------------------------
 # NOTE
 #   After publishing to web-host (e.g. youtube), it may take some time
@@ -43,7 +49,7 @@ IS_ODD=1
 ## Checks
 [[ $size != 0 ]] && {
   printf "Resize mode\nSetting size to: $size\n" 
-  optional_vf_resize="-vf size=$size"
+  optional_vf_resize="-vf scale=$size"
   
 }
 (( fps & 1 == IS_ODD)) && {
@@ -90,7 +96,7 @@ opts=(
   # --------------------------------------------------------------------
   # NOTE -- currently movie is not being forced to any size
   #      -- output will be the result of the size of the input frames.
-  #      -- To change this, specify `size` or `pad` as a `-vf` flag.
+  #      -- To change this, specify `scale` or `pad` as a `-vf` flag.
   # --------------------------------------------------------------------
   # Padding to youtube 16:9 pixel size is recommended for frames that are
   # smaller--e.g. to 1920x1080p. See docs to change pad color.
