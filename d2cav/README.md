@@ -8,4 +8,4 @@ d2zv
 ----
 
 Scripts that were used to monitor the vertically oscillating stably
-stratifed square cavity.
+stratified square cavity.
