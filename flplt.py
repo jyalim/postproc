@@ -112,7 +112,7 @@ TOLERANCE = 1e-8
 # SUBROUTINES ----------------------------------------------------------
 def check_file(rec):
   if not os.path.exists(rec):
-    print('Reset data file {:s} not found, quitting')
+    print(f'Reset data file {rec:s} not found, quitting')
     sys.exit(1)
   return rec
 
