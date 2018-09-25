@@ -7,7 +7,7 @@ from glob import glob
 import matplotlib.patches as patches
 import multiprocessing as mp
 
-mkl_set_num_threads(2)
+mkl_set_num_threads(1)
 NPROCS=16
 
 SKIP=0
@@ -31,44 +31,7 @@ if TIME_NORM:
 
 PARTITION_MAPPING = True
 
-PHASE_PLOT  = False
-
-PLOT_FIELDS = ['u','w','eta','T','Tx','Tz','Th','Thz','JD','uL','uTh','ReSu','ReSw','ReCu']
-SYMLOG_PLOTS= {
-  'u'   : False,
-  'w'   : False,
-  'eta' : False,
-  'T'   : False,
-  'Tx'  : False,
-  'Tz'  : False,
-  'Th'  : False,
-  'Thz' : False,
-  'JD'  : False,
-  'uL'  : False,
-  'uTh' : False,
-  'ReSu': False,
-  'ReSw': False,
-  'ReCu': False,
-}
-LINEAR_PLOTS= {
-  'u'   : False,
-  'w'   : False,
-  'eta' : False,
-  'T'   : False,
-  'Tx'  : False,
-  'Tz'  : False,
-  'Th'  : False,
-  'Thz' : False,
-  'JD'  : False,
-  'uL'  : False,
-  'uTh' : False,
-  'ReSu': False,
-  'ReSw': False,
-  'ReCu': False,
-}
-
 REQ_FIELD = sys.argv[4]
-LINEAR_PLOTS[REQ_FIELD]=True
 
 NUM_CONTOURS  = 19
 NUM_CONTOURS  =  0
@@ -89,23 +52,11 @@ if '/' == fdir[-1]:
 print( 'fdir: {:s}'.format(fdir) )
 print('sysr:', sys.argv[5:])
 
-# Full Colormap                # Paint Domain | Paint Range
-TOTAL_CMAP           = mycm19  #    [-a, a]   | dark blue to dark red
-TOTAL_NLVL           = 19      #    19 colors defined
-# Partition Colormaps, for b > a and c < d : a,b,c,d > 0
-#                              # Paint Domain | Paint Range
-#                              # -------------|------------------
-LEFT_EXTREME_CMAP    = myBlues #    [-b,-a]   | dark blue, blue
-LEFT_INTERIOR_CMAP   = myBlWh  #    [-a, 0]   | blue,cyan,white
-INTERIOR_CMAP        = mycm15  #    [-a, a]   | blue,white,red
-RIGHT_INTERIOR_CMAP  = myWhRd  #    [ 0, c]   | white,yellow,red
-RIGHT_EXTREME_CMAP   = myReds  #    [ c, d]   | red, dark red
-
-LEFT_EXTREME_NLVL    =  3      #    [-b,-a]   | 3 colors defined
-LEFT_INTERIOR_NLVL   =  8      #    [-a, 0]   | 8 colors defined
-INTERIOR_NLVL        = 15      #    [-a, a]   |15 colors defined
-RIGHT_INTERIOR_NLVL  =  8      #    [ 0, c]   | 8 colors defined
-RIGHT_EXTREME_NLVL   =  3      #    [ c, d]   | 3 colors defined
+#                      # Paint Domain | Paint Range
+ALL_CMAP     = mycm19  #    [-a, a]   | dark blue to dark red
+NEG_EXT_CMAP = myBlues #    [-b,-a]   | dark blue, blue
+INT_CMAP     = mycm15  #    [-a, a]   | blue,white,red
+POS_EXT_CMAP = myReds  #    [ c, d]   | red, dark red
 
 TOLERANCE = 1e-8
 # ======================================================================
@@ -205,7 +156,7 @@ def header_print(num_files):
     print('PARALLEL MODE')
     print('NPROCS: {:d}'.format(NPROCS))
     print('SERIAL MODE')
-  print('PLOTTING FIELDS: ' + (len(PLOT_FIELDS)*'{:s} ').format(*PLOT_FIELDS))
+  print(f'PLOTTING FIELD: {REQ_FIELD:s}')
 # print('CLIPPING:        {:g}%'.format(CLIPPING))
   print(72*'-')
   print('{:^28s} {:^10s} {:^10s} {:^10s} {:^10s}'.format(
@@ -233,11 +184,6 @@ def check_to_plot(f):
   parse_data = True if any(req) else False
   return parse_data
 
-NEG_EXT_CM = myBlues
-INT_CM     = mycm15
-POS_EXT_CM = myReds
-ALL_CM     = mycm19
-
 def mycf(X,Z,Q,out_fig,ima=1,gma=400,fn=10,ax=0.):
   f,a = no_ax_fax(k=fn,fs_base=6)
   mycontourf(X,Z,Q,levels=linspace(-gma,-ima,3 ),cmap=NEG_EXT_CM)
@@ -257,8 +203,7 @@ def main(f):
     return None
   else:
     x,z       = [ data[key] for key in ['x','z'] ]
-    plt_field = sys.argv[4]
-    int_field = cheb_interp(2*x,2*z,2*xp,2*xp,{plt_field:data[plt_field]})[plt_field]
+    int_field = cheb_interp(2*x,2*z,2*xp,2*xp,{plt_field:data[REQ_FIELD]})[REQ_FIELD]
     mycf(Xp,Zp,int_field/IMA,get_figname(f,plt_field),ima=1,gma=GMA)
     return int_field
   return None
@@ -276,8 +221,6 @@ if __name__ == '__main__':
   for arg in sys.argv[5:]:
     if '*' in arg:
       drec_list = glob(arg)
-      for drec in drec_list:
-        drecs.append(check_file(drec))
     else:
       drecs.append(check_file(arg))
 
