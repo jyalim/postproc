@@ -16,36 +16,19 @@ CLIPPING=10
 CONTOUR_OPTIMIZING = True
 CONTOUR_OPTIMIZING = False
 
-PROBE_NORM = sys.argv[4]
+REQ_FIELD  = sys.argv[4]
+PROBE_NORM = REQ_FIELD
 PROBE_NORM = ''
 
-TIME_NORM  = False
-TIME_NORM  = True
-#NORMALIZE_SCALAR  = float(sys.argv[2]) if TIME_NORM else 1.
-#INT_NORM          = float(sys.argv[3]) # if TIME_NORM 
 IMA = float(sys.argv[2])
 GMA = float(sys.argv[3])
-if TIME_NORM:
-  print('NORMALIZING FIELDS BASED ON PRESCRIBED GLOBAL VALUE')
-  print('-- interior post norm: {:f}\n-- norm value: {:f}'.format(1,IMA))
-
-PARTITION_MAPPING = True
-
-REQ_FIELD = sys.argv[4]
-
-NUM_CONTOURS  = 19
-NUM_CONTOURS  =  0
-
-ZERO_CONTOUR  = True
-
-NUM_FILLED_CONTOURS = 256
-NUM_FILLED_CONTOURS = 90 
-NUM_FILLED_CONTOURS = 15
 
 FIG_BASE      = FBASE= fbase = sys.argv[1]
 FIG_DIRECTORY = FDIR = fdir  = 'fig' + '/' + FBASE
+
 OUT_FILE_TYPE = OREC = orec  = 'pdf'
 OUT_FILE_TYPE = OREC = orec  = 'png'
+
 fdir = fdir.strip()
 if '/' == fdir[-1]:
   fdir = fdir[:-1]
@@ -154,13 +137,13 @@ def header_print(num_files):
   print(72*'-')
   if NPROCS > 1:
     print('PARALLEL MODE')
-    print('NPROCS: {:d}'.format(NPROCS))
+    print(r'NPROCS: {NPROCS:d}')
     print('SERIAL MODE')
   print(f'PLOTTING FIELD: {REQ_FIELD:s}')
 # print('CLIPPING:        {:g}%'.format(CLIPPING))
   print(72*'-')
   print('{:^28s} {:^10s} {:^10s} {:^10s} {:^10s}'.format(
-      'file (under {:s}/)'.format(fdir),'imi','ima','gmi','gma'
+      f'file (under {fdir:s}/)','imi','ima','gmi','gma'
     )
   )
   return None
@@ -194,6 +177,7 @@ def mycf(X,Z,Q,out_fig,ima=1,gma=400,fn=10,ax=0.):
   savefig(out_fig)
   return None
 
+# XXX
 Dp,xp  = cheb(512); xp = .5*xp.flatten(); Dp = 2*Dp;
 Xp,Zp  = meshgrid(xp,xp,indexing='ij')
 
@@ -212,7 +196,7 @@ def main(f):
 def main_mean(f_dE):
   f,dE = f_dE
   out_fig=get_figname(f,'eta_pert')
-  mycf(Xc,Zc,dE/4500,out_fig,ima=1)
+  mycf(Xp,Zp,dE/4500,out_fig,ima=1)
   return None
 
 if __name__ == '__main__':
@@ -254,6 +238,7 @@ if __name__ == '__main__':
         E = mean(D,axis=0)
         ima = abs(E[125:-125,125:-125]).max()
         mycf(Xp,Zp,E/ima,get_figname(drecs[0].replace('_000000',''),qq+'_mean'),ima=1,gma=GMA)
+        mkl_set_num_threads(1)
     # save('D_o143e-2_M2N2_Kxz',D,allow_pickle=True)
     # E   = mean(D,axis=0)
     # ETA = cheb_interp(x,x,q,q,{'eta':E})['eta']
@@ -267,4 +252,4 @@ if __name__ == '__main__':
       for drec in drecs:
         main(drec)
   else:
-    main(drecs[24])
+    main(drecs[len(drecs)//2])
