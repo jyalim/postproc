@@ -11,7 +11,6 @@ mkl_set_num_threads(1)
 NPROCS=16
 
 SKIP=0
-CLIPPING=10
 
 CONTOUR_OPTIMIZING = True
 CONTOUR_OPTIMIZING = False
@@ -23,8 +22,8 @@ IMA = float(sys.argv[2])
 GMA = float(sys.argv[3])
 
 REQ_FIELD  = sys.argv[4]
-PROBE_NORM = REQ_FIELD
-PROBE_NORM = ''
+PROBE_MODE = REQ_FIELD
+PROBE_MODE = ''
 
 OUT_FILE_TYPE = OREC = orec  = 'pdf'
 OUT_FILE_TYPE = OREC = orec  = 'png'
@@ -117,8 +116,8 @@ def reader(f):
     'omega'  : omega,
     'Rn'     : Rn,
   }
-  if len(PROBE_NORM)>0:
-    q = PROBE_NORM
+  if len(PROBE_MODE)>0:
+    q = PROBE_MODE
     Q = retd[q]
     gma = abs(Q).max()
     ind = abs(x - .75*.5).argmin()
@@ -138,12 +137,12 @@ def header_print(num_files):
   if NPROCS > 1:
     print('PARALLEL MODE')
     print(r'NPROCS: {NPROCS:d}')
+  else:
     print('SERIAL MODE')
   print(f'PLOTTING FIELD: {REQ_FIELD:s}')
-# print('CLIPPING:        {:g}%'.format(CLIPPING))
   print(72*'-')
-  print('{:^28s} {:^10s} {:^10s} {:^10s} {:^10s}'.format(
-      f'file (under {fdir:s}/)','imi','ima','gmi','gma'
+  print('{:^28s} {:^10s} {:^10s}'.format(
+      f'file (under {fdir:s}/)','ima','gma'
     )
   )
   return None
@@ -179,7 +178,7 @@ Xp,Zp  = meshgrid(xp,xp,indexing='ij')
 
 def main(f):
   data  = reader(f)
-  if len(PROBE_NORM):
+  if len(PROBE_MODE):
     return None
   else:
     x,z       = [ data[key] for key in ['x','z'] ]
@@ -224,7 +223,7 @@ if __name__ == '__main__':
       qq   = sys.argv[4]
       pool = mp.Pool(processes=NPROCS)
       pool.map(main,drecs[SKIP:])
-      if len(PROBE_NORM) > 0:
+      if len(PROBE_MODE) > 0:
         pool.map(main,drecs[SKIP:])
       else:
         D = pool.map(main,drecs[SKIP:])
