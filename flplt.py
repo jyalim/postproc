@@ -117,10 +117,10 @@ def reader(f):
     'Rn'     : Rn,
   }
   if len(PROBE_MODE)>0:
-    q = PROBE_MODE
+    q = REQ_FIELD
     Q = retd[q]
     gma = abs(Q).max()
-    ind = abs(x - .75*.5).argmin()
+    ind = abs(x - 0.375).argmin()
     ima = abs(Q[ind:-ind,ind:-ind]).max()
     probe_res = ('{:s} {:s}' + 3*' {:+21.7e}').format(q,fbase,ima,gma,gma/ima)
     print(probe_res,file=sys.stderr)
@@ -141,8 +141,8 @@ def header_print(num_files):
     print('SERIAL MODE')
   print(f'PLOTTING FIELD: {REQ_FIELD:s}')
   print(72*'-')
-  print('{:^28s} {:^10s} {:^10s}'.format(
-      f'file (under {fdir:s}/)','ima','gma'
+  print('{:^28s} {:^10s} {:^10s} {:^10s}'.format(
+      f'file (under {fdir:s}/)','ima','gma','gma/ima'
     )
   )
   return None
@@ -186,7 +186,6 @@ def main(f):
     mycf(Xp,Zp,int_field/IMA,get_figname(f,plt_field),ima=1,gma=GMA)
     return int_field
   return None
-
 
 def main_mean(f_dE):
   f,dE = f_dE
