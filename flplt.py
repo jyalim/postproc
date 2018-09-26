@@ -16,15 +16,15 @@ CLIPPING=10
 CONTOUR_OPTIMIZING = True
 CONTOUR_OPTIMIZING = False
 
-REQ_FIELD  = sys.argv[4]
-PROBE_NORM = REQ_FIELD
-PROBE_NORM = ''
+FIG_BASE      = FBASE= fbase = sys.argv[1]
+FIG_DIRECTORY = FDIR = fdir  = 'fig' + '/' + FBASE
 
 IMA = float(sys.argv[2])
 GMA = float(sys.argv[3])
 
-FIG_BASE      = FBASE= fbase = sys.argv[1]
-FIG_DIRECTORY = FDIR = fdir  = 'fig' + '/' + FBASE
+REQ_FIELD  = sys.argv[4]
+PROBE_NORM = REQ_FIELD
+PROBE_NORM = ''
 
 OUT_FILE_TYPE = OREC = orec  = 'pdf'
 OUT_FILE_TYPE = OREC = orec  = 'png'
@@ -64,7 +64,7 @@ def reader(f):
     M,N = header[0][0][1:3]
     t   = header[0][3]
     omega = header[0][1][4]
-    buoy_f= header[0][1][1]
+    Rn    = header[0][1][1]
     udt = dtype('({:d},{:d}) f8'.format(M+1,N+1))
     uold= read_vel(fh,pdt,udt)
     u   = read_vel(fh,pdt,udt)
@@ -113,9 +113,9 @@ def reader(f):
     'ReSw': ReSw,
     'ReCu': ReCu,
     'aspect' : aspect,
-    't'             : t,
-    'omega'         : omega,
-    'buoyancy_freq' : buoy_f,
+    't'      : t,
+    'omega'  : omega,
+    'Rn'     : Rn,
   }
   if len(PROBE_NORM)>0:
     q = PROBE_NORM
@@ -152,22 +152,17 @@ def get_figname(f,field,label=''):
   return '{:s}/{:s}_{:s}{:s}.{:s}'.format(fdir,f.split('/')[-1],field,label,OUT_FILE_TYPE)
 
 def check_to_plot(f):
-  req = [ False ]
-  for field in PLOT_FIELDS:
-    out_fig = get_figname(f,field)
-    do_plot = False
-    if LINEAR_PLOTS[field]:
-      if not os.path.exists(out_fig):
-        do_plot = True
-    elif SYMLOG_PLOTS[field]:
-      symlog_out_fig = get_figname(f,field,label='_symlog')
-      if not os.path.exists(symlog_out_fig):
-        do_plot = True
-    req.append(do_plot)
-  parse_data = True if any(req) else False
-  return parse_data
+  field = REQ_FIELD
+  out_fig = get_figname(f,field)
+  do_plot = False
+  if not os.path.exists(out_fig):
+    do_plot = True
+  return do_plot
 
 def mycf(X,Z,Q,out_fig,ima=1,gma=400,fn=10,ax=0.):
+  """
+    mycontourf in hellaPy
+  """
   f,a = no_ax_fax(k=fn,fs_base=6)
   mycontourf(X,Z,Q,levels=linspace(-gma,-ima,3 ),cmap=NEG_EXT_CM)
   mycontourf(X,Z,Q,levels=linspace(-ima, ima,15),cmap=INT_CM    )
@@ -177,9 +172,10 @@ def mycf(X,Z,Q,out_fig,ima=1,gma=400,fn=10,ax=0.):
   savefig(out_fig)
   return None
 
-# XXX
+## XXX
 Dp,xp  = cheb(512); xp = .5*xp.flatten(); Dp = 2*Dp;
 Xp,Zp  = meshgrid(xp,xp,indexing='ij')
+##
 
 def main(f):
   data  = reader(f)
